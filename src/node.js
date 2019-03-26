@@ -10,10 +10,10 @@ class Node {
     appendChild(node) {
         if (!this.left) {
             this.left = node;
-            this.left.parent = this;
+            node.parent = this;
         } else if (!this.right) {
             this.right = node;
-            this.right.parent = this;
+            node.parent = this;
         }
     }
 
@@ -24,7 +24,7 @@ class Node {
         } else if (this.right === node) {
             this.right = null;
             node.parent = null;
-        } else if (this.left !== node && this.right !== node) {
+        } else {
             throw Error;
         }
     }
@@ -37,48 +37,42 @@ class Node {
 
     swapWithParent() {
         if (this.parent) {
-            Node.updateOutsideNodes(this);
-            Node.updateTargetNodes(this);
-        }
-    }
-
-    static updateOutsideNodes(node) {
-        if (node.parent.parent) {
-            if (node.parent.parent.left === node.parent) {
-                node.parent.parent.left = node;
+            if (this.parent.parent) {
+                if (this.parent.parent.left === this.parent) {
+                    this.parent.parent.left = this;
+                } else {
+                    this.parent.parent.right = this;
+                }
+            }
+            let temp = {
+                parent: this.parent,
+                parentsParent: this.parent.parent,
+                parentsLeft: this.parent.left,
+                parentsRight: this.parent.right
+            };
+            if (this.left) this.left.parent = this.parent;
+            if (this.right) this.right.parent = this.parent;
+            this.parent.left = this.left;
+            this.parent.right = this.right;
+            this.parent.parent = this;
+            this.parent = temp.parentsParent;
+            if (temp.parentsLeft === this) {
+                this.left = temp.parent;
+                this.right = temp.parentsRight;
+                this.left.parent = this;
+                if (this.right) {
+                    this.right.parent = this;
+                }
             } else {
-                node.parent.parent.right = node;
+                this.right = temp.parent;
+                this.left = temp.parentsLeft;
+                this.right.parent = this;
+                if (this.left) {
+                    this.left.parent = this;
+                }
             }
         }
     }
-
-    static updateTargetNodes(node){
-        let tempParent = node.parent;
-        let tempParentsParent = node.parent.parent;
-        let tempParentsLeft = node.parent.left;
-        let tempParentsRight = node.parent.right;
-
-        node.parent.left = node.left;
-        node.parent.right = node.right;
-        node.parent.parent = node;
-
-        node.parent = tempParentsParent;
-        if (tempParentsLeft === node) {
-            node.left = tempParent;
-            node.right = tempParentsRight;
-            if (node.right) {
-                node.right.parent = node;
-            }
-
-        } else {
-            node.right = tempParent;
-            node.left = tempParentsLeft;
-            if (node.left) {
-                node.left.parent = node;
-            }
-        }
-    }
-
 }
 
 module.exports = Node;

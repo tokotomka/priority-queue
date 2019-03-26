@@ -48,12 +48,11 @@ class MaxHeap {
     size() {
         let heapSize = 0;
         if (this.root) {
-            let helper = [this.root], currentNode = this.root;
-            while (helper.length > 0) {
-                if (currentNode.left) helper.push(currentNode.left);
-                if (currentNode.right) helper.push(currentNode.right);
-                helper.shift();
-                currentNode = helper[0];
+            let arr = [this.root];
+            while (arr.length > 0) {
+                if (arr[0].left) arr.push(arr[0].left);
+                if (arr[0].right) arr.push(arr[0].right);
+                arr.shift();
                 heapSize++;
             }
         }
@@ -77,18 +76,14 @@ class MaxHeap {
             this.parentNodes.push(node);
             let parent = this.parentNodes[0];
             parent.appendChild(node);
-            if (parent.left && parent.right) {
-                this.parentNodes.shift();
-            }
+            if (parent.left && parent.right) this.parentNodes.shift();
         }
     }
 
     shiftNodeUp(node) {
         if (node.parent) {
             if (node.parent.priority < node.priority) {
-                if (node.parent === this.root) {
-                    this.root = node;
-                }
+                if (node.parent === this.root) this.root = node;
                 if (!node.left || !node.right) {
                     if (node === this.parentNodes[0]) {
                         if (node.parent.left && node.parent.right) {
@@ -112,16 +107,14 @@ class MaxHeap {
     }
 
     shiftNodeDown(node) {
-        if (!this.isEmpty()) {
-            if (node.left && node.priority < node.left.priority || node.right && node.priority < node.right.priority) {
-                let direction;
-                if (node.right) {
-                    direction = node.left.priority > node.right.priority ? node.left : node.right
-                } else {
-                    direction = node.left;
-                }
-                if (node === this.root) this.root = direction;
-                direction.swapWithParent();
+        if (this.root) {
+            if (node.left && node.priority < node.left.priority ||
+                node.right && node.priority < node.right.priority) {
+                let child = node.right ?
+                    node.left.priority > node.right.priority ? node.left : node.right :
+                    node.left;
+                if (node === this.root) this.root = child;
+                child.swapWithParent();
                 let nodeIndex = this.parentNodes.indexOf(node),
                     parentIndex = this.parentNodes.indexOf(node.parent);
                 if (nodeIndex > -1) this.parentNodes.splice(nodeIndex, 1, node.parent);

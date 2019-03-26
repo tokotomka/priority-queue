@@ -30,9 +30,7 @@ class Node {
     }
 
     remove() {
-        if (this.parent) {
-            this.parent.removeChild(this);
-        }
+        if (this.parent) this.parent.removeChild(this);
     }
 
     swapWithParent() {
@@ -60,16 +58,12 @@ class Node {
                 this.left = temp.parent;
                 this.right = temp.parentsRight;
                 this.left.parent = this;
-                if (this.right) {
-                    this.right.parent = this;
-                }
+                if (this.right) this.right.parent = this;
             } else {
                 this.right = temp.parent;
                 this.left = temp.parentsLeft;
                 this.right.parent = this;
-                if (this.left) {
-                    this.left.parent = this;
-                }
+                if (this.left) this.left.parent = this;
             }
         }
     }
